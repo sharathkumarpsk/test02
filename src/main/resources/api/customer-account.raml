@@ -1,0 +1,54 @@
+#%RAML 1.0
+title: Customer account
+types:
+    customer: !include /examples/dataType.raml
+
+/customer:
+  get:
+    queryParameters:
+      account type:
+        required: false
+        enum:
+          - business
+          - personal
+      name:
+        required: false
+        type: string
+    responses:
+      200:
+        body:
+          application/json:
+            type: customer[]
+            examples:
+              output: !include /examples/customerrecord.raml
+  post:
+    body:
+      application/json:
+        type: customer[]
+        examples:
+          input: !include /examples/customerCreateRequest.raml
+    responses:
+      200:
+        body:
+          application/json:
+            example:
+              message: Accounts created
+  /{ID}:
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+              type: customer[]
+              examples:
+                output: !include /examples/customer Get by ID.raml
+        404:
+          body:
+            application/json:
+              type: any
+              example: 
+                output: {"message": "Account not found"}
+
+               
+
+      

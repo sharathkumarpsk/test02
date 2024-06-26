@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="37f350d7-55b3-4654-ba28-976be79918ec" >
+		<db:generic-connection url="jdbc:mysql://mudb.learn.mulesoft.com:3306/training?user=mule&amp;password=mule" driverClassName="com.mysql.cj.jdbc.Driver" user="mule" password="mule" />
+	</db:config>
+	<flow name="diy_customersFlow" doc:id="d76f96b2-e112-4b7c-b170-ba9bc0e1caab" >
+		<http:listener doc:name="Listener" doc:id="f6be12d2-6836-48a7-8438-68f8e01797d2" path="/customer" config-ref="customer-account-httpListenerConfig"/>
+		<db:select doc:name="Select flights_customers" doc:id="04a80b67-c1ab-4a8d-a2a9-898786f2ae8a" config-ref="Database_Config">
+			<db:sql ><![CDATA[SELECT * FROM flights_customers]]></db:sql>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="0a52097e-c02e-4687-8641-2ddf97b584fb" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map ( payload01 , indexOfPayload01 ) -> {
+	ID: payload01.accountID as Number default 0,
+	name: payload01.name default "",
+	"type": payload01.accountType default "",
+	airmiles: payload01.miles default 0,
+	"created date": payload01.creationDate as String default "",
+	address: (((((payload01.name default "") ++ (payload01.street default "")) ++ (payload01.city default "")) ++ (payload01.state default "")) ++ (payload01.postal default "")) ++ (payload01.country default "")
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

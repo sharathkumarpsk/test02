@@ -1,0 +1,40 @@
+#%RAML 1.0 DataType
+
+type: object
+properties:
+  ID:
+    type: integer
+    required: false
+  name:
+    type: string
+  age:
+    type: integer
+    required: false
+  type:
+    type: any
+  airmiles:
+    type: integer
+  created date:
+    type: date-only
+    required: false
+  items:
+    type: array
+    required: false
+
+    items:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        rate:
+          type: number
+        quantity:
+          type: integer
+        tax:
+          type: string
+    minItems: 1
+  address:
+    type: string
+
